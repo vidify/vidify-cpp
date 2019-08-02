@@ -4,6 +4,8 @@
 #ifndef PLAYER_LIB
 #define PLAYER_LIB
 
+void log(std::string msg, bool debug = true);
+
 class VLCWindow {
     public:
         VLCWindow(bool debug, bool fullscreen);
@@ -12,9 +14,10 @@ class VLCWindow {
         void play();
         void pause();
         void toggle_pause();
-        void get_url();
+        std::string get_url(std::string title);
         void load_video(std::string url);
-        void set_position();
+        void set_position(int ms);
+        void print_lyrics(std::string name);
     private:
         // VLC Instance
         libvlc_instance_t *instance;

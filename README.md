@@ -88,11 +88,57 @@ optional arguments:
 * To configure the maximum size of VLC's window a GUI would need to be implemented, like tkinter. The project would be much less minimal that way, but more features could be implemented, like lyrics inside the GUI.
 * Spotify's Web API doesn't allow function calls on updates like Dbus, meaning that the metadata has to be manually updated every second and checked in case of changes.
 
+## Differences with the python implementation
+
+Benchmark:
+
+```c++
+// Rough benchmark. Add this to main and modify play_videos_dbus to return the offset time before wait()
+// Disable the spotify part, only do it for a single song
+void benchmark(int reps, DbusPlayer spotify) {
+    int total = 0;
+    int time = 0;
+    for (int i=0; i<reps; i++) {
+        time = play_videos_dbus(spotify.player, spotify);
+        total += time;
+    }
+    std::cout << "TOTAL TIME: " << total << "\n";
+    double average = total/reps;
+    std::cout << "AVERAGE: " << average << std::endl;
+}
+```
+
+```python
+# Rough benchmark. Add this to main and modify play_videos_dbus to return the offset time before wait()
+# Disable the spotify part, only do it for a single song
+def benchmark(int reps, DbusPlayer spotify):
+    total = 0
+    time = 0
+
+    for i in range(reps):
+        time = play_videos_dbus(spotify.player, spotify)
+        total += time
+
+    print("TOTAL TIME: {}".fomat(total))
+    average = total/reps
+    print("AVERAGE: {}".format(average))
+```
+
+02/07/2019 results with reps=100, lyrics disabled, name = "Arctic Monkeys", only dbus
+```
+C++:
+    TOTAL TIME: 243471
+    AVERAGE: 2434
+PYTHON:
+    TOTAL TIME: 175593
+    AVERAGE: 1755
+```
+
 
 ## Documentation
 
 Helpful documentation links for contributing:
 * [DBus](https://dbus.freedesktop.org/doc/dbus-specification.html)
 * [MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:Position)
-* [VLC](https://wiki.videolan.org/LibVLC/)
+* [VLC](https://wiki.videolan.org/LibVLC/), [LibVLC](https://www.videolan.org/developers/vlc/doc/doxygen/html/group__libvlc.html)
 

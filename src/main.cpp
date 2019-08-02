@@ -1,26 +1,28 @@
 #ifdef __linux__
-    #define SYSTEM "Linux"
+    #define USE_DBUS true
 #else
-    #define SYSTEM "Other"
+    #define USE_DBUS false
 #endif
 
 #include <iostream>
+#include <chrono>
 #include "../lib/player.h"
+
 
 void print_usage();
 void print_version();
 void play_videos_dbus(VLCWindow player, DbusPlayer spotify);
 
+// Argument variables
+bool SHOW_LYRICS = true;
+bool FULLSCREEN = false;
+bool DEBUG = false;
+
 
 int main(int argc, char *argv[]) {
-    // Argument variables
-    bool SHOW_LYRICS = true;
-    bool FULLSCREEN = false;
-    bool DEBUG = false;
-
     // Argument parsing
     if (argc >= 2) {
-        for (int i=1; i<=argc; i++) {
+        for (int i=1; i<argc; i++) {
             std::string arg = argv[i];
             if (arg == "--help" || arg == "-h") {
                 print_usage();
@@ -55,17 +57,22 @@ int main(int argc, char *argv[]) {
 
 void play_videos_dbus(VLCWindow player, DbusPlayer spotify) {
     while(1) {
-        // Get formatted name
+        std::string name = "Arctic Monkeys";
 
-        // Count elapsed time
-        // Get url with youtube_dl
-        std::string url = "/home/mario/Downloads/test_video.mp4";
+        auto t_start = std::chrono::high_resolution_clock::now();
+
+        std::string url = player.get_url(name);
         player.load_video(url);
-        // Set offset time
-        // Play only if spotify is playing
+
+        auto t_end = std::chrono::high_resolution_clock::now();
+        int offset = std::chrono::duration<double, std::milli>(t_end-t_start).count();
+        player.set_position(offset);
+        // TODO: Play only if spotify is playing
         player.play();
 
-        // Print lyrics
+        if (SHOW_LYRICS) {
+            player.print_lyrics(name);
+        }
 
         spotify.wait();
     }
@@ -75,7 +82,7 @@ void print_usage() {
     std::cout << "usage: spotify-videoclips [-h] [-v] [-n] [-f]\n\n"
         << "Windows and Mac users must pass --username, --client-id and --client-secret to\n"
         << "use the web API. Read more about how to obtain them in the README\n"
-        << "(https://github.com/marioortizmanero/spotify-videoclips)\n\n"
+        << "(https://github.com/marioortizmanero/spotify-videoclips-cpp)\n\n"
         << "optional arguments:\n"
         << "  -h, --help            show this help message and exit\n"
         << "  -v, --version         show the program's version and exit\n"
@@ -86,5 +93,5 @@ void print_usage() {
 }
 
 void print_version() {
-    std::cout << "spotify-videoclips 1.0.0" << std:: endl;
+    std::cout << "spotify-videoclips 1.0.0" << std::endl;
 }
