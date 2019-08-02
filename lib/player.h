@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vlc/vlc.h>
+#include <dbus-c++/dbus.h>
 
 #ifndef PLAYER_LIB
 #define PLAYER_LIB
@@ -28,23 +29,20 @@ class VLCWindow {
         bool fullscreen;
 };
 
-class WebPlayer {
+class DBusPlayer {
     public:
-        std::string format_name();
-        void start_video(std::string url);
-        void wait();
-    private:
-};
-
-class DbusPlayer {
-    public:
-        DbusPlayer(bool debug, bool fullscreen);
-        ~DbusPlayer() = default; // TODO
+        DBusPlayer(bool debug, bool fullscreen);
+        ~DBusPlayer() = default; // TODO
         
-        std::string asd = "aaaaaaaaaaaa";
         VLCWindow player;
+        std::string artist;
+        std::string title;
+        bool is_playing;
         void wait();
     private:
+        DBusConnection *connection;
+        DBusError error;
+        GMainLoop *loop;
 };
 
 #endif // PLAYER_LIB

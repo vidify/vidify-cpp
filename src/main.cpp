@@ -11,7 +11,7 @@
 
 void print_usage();
 void print_version();
-void play_videos_dbus(VLCWindow player, DbusPlayer spotify);
+void play_videos_dbus(VLCWindow player, DBusPlayer spotify);
 
 // Argument variables
 bool SHOW_LYRICS = true;
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
     // Hides stderr if debug is disabled
     if (!DEBUG) freopen("/dev/null", "w", stderr);
 
-    DbusPlayer spotify(DEBUG, FULLSCREEN);
+    DBusPlayer spotify(DEBUG, FULLSCREEN);
 
     // Check platform
     play_videos_dbus(spotify.player, spotify);
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void play_videos_dbus(VLCWindow player, DbusPlayer spotify) {
+void play_videos_dbus(VLCWindow player, DBusPlayer spotify) {
     while(1) {
         std::string name = "Arctic Monkeys";
 
@@ -66,13 +66,12 @@ void play_videos_dbus(VLCWindow player, DbusPlayer spotify) {
 
         auto t_end = std::chrono::high_resolution_clock::now();
         int offset = std::chrono::duration<double, std::milli>(t_end-t_start).count();
-        player.set_position(offset);
+
         // TODO: Play only if spotify is playing
         player.play();
+        player.set_position(offset);
 
-        if (SHOW_LYRICS) {
-            player.print_lyrics(name);
-        }
+        if (SHOW_LYRICS) player.print_lyrics(name);
 
         spotify.wait();
     }

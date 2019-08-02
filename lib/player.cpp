@@ -6,6 +6,9 @@
 #include <string>
 #include <array>
 #include <vlc/vlc.h>
+#include <dbus/dbus.h>
+
+#define BUS_NAME "org.mpris.MediaPlayer2.spotify"
 
 
 // Initialize the instance and the player
@@ -32,25 +35,15 @@ std::string VLCWindow::get_url(std::string title) {
     std::array<char, 128> buffer;
     std::string result;
     // Formatting the full command that returns the url
-    std::string search = "youtube-dl -g 'ytsearch:" + title + "' "
-        + "-f 'bestvideo'";
-    auto pipe = popen(search.c_str(), "r");
-
-    if (!pipe) throw std::runtime_error("popen() failed!");
-
-    while (!feof(pipe)) {
-        if (fgets(buffer.data(), 128, pipe) != nullptr)
-            result += buffer.data();
+    std::string search = "youtube-dl -g 'ytsearch:" + title + "' -f 'bestvideo'";
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(search.c_str(), "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
     }
-
-    auto rc = pclose(pipe);
-
-    if (rc == EXIT_FAILURE) {
-        std::cout << "No video was found" << std::endl;
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
     }
-
-    // Remove extra new lines from output
-    result.erase(std::remove(result.begin(), result.end(), '\n'), result.end());
+    result.pop_back();
     return result;
 }
 
@@ -62,8 +55,11 @@ void VLCWindow::load_video(const std::string url) {
     // Media instance
     libvlc_media_t *media = libvlc_media_new_location(instance, url.c_str());
     if (!media) throw std::runtime_error("No media found");
+
+    // Loading media on the player
     libvlc_media_player_set_media(player, media);
     libvlc_media_release(media);
+    libvlc_set_fullscreen(player, fullscreen);
 }
 
 // Print the song lyrics
@@ -95,11 +91,13 @@ void VLCWindow::set_position(int ms) {
 }
 
 // Initialize all dbus variables
-DbusPlayer::DbusPlayer(bool debug, bool fullscreen) : player(debug, fullscreen) {
+DBusPlayer::DBusPlayer(bool debug, bool fullscreen) : player(debug, fullscreen) {
+    // Init the error structure
+   dbus_error_init(&error);
 }
 
 // Wait for changes in the dbus data
-void DbusPlayer::wait() {
+void DBusPlayer::wait() {
     while(1) {}
 }
 
