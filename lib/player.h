@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vlc/vlc.h>
-#include <dbus-c++/dbus.h>
+#include <dbus/dbus.h>
 
 #ifndef PLAYER_LIB
 #define PLAYER_LIB
@@ -42,7 +42,7 @@ class DBusPlayer {
     private:
         DBusConnection *connection;
         DBusError error;
-        GMainLoop *loop;
+        // GMainLoop *loop;
 };
 
 #endif // PLAYER_LIB

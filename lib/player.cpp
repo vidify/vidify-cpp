@@ -34,16 +34,20 @@ VLCWindow::VLCWindow(bool args_debug, bool args_fullscreen) {
 std::string VLCWindow::get_url(std::string title) {
     std::array<char, 128> buffer;
     std::string result;
+
     // Formatting the full command that returns the url
     std::string search = "youtube-dl -g 'ytsearch:" + title + "' -f 'bestvideo'";
+
     std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(search.c_str(), "r"), pclose);
-    if (!pipe) {
-        throw std::runtime_error("popen() failed!");
-    }
+    if (!pipe) throw std::runtime_error("popen() failed!");
+
     while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
         result += buffer.data();
     }
+
+    // Removing the extra new line at the end
     result.pop_back();
+
     return result;
 }
 

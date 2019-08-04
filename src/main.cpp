@@ -78,10 +78,10 @@ void play_videos_dbus(VLCWindow player, DBusPlayer spotify) {
 }
 
 void print_usage() {
-    std::cout << "usage: spotify-videoclips [-h] [-v] [-n] [-f]\n\n"
+    std::cout << "usage: spotify-videos [-h] [-v] [-n] [-f]\n\n"
         << "Windows and Mac users must pass --username, --client-id and --client-secret to\n"
         << "use the web API. Read more about how to obtain them in the README\n"
-        << "(https://github.com/marioortizmanero/spotify-videoclips-cpp)\n\n"
+        << "(https://github.com/marioortizmanero/spotify-music-videos-cpp)\n\n"
         << "optional arguments:\n"
         << "  -h, --help            show this help message and exit\n"
         << "  -v, --version         show the program's version and exit\n"
@@ -92,5 +92,5 @@ void print_usage() {
 }
 
 void print_version() {
-    std::cout << "spotify-videoclips 1.0.0" << std::endl;
+    std::cout << "spotify-videos (c++) 1.0.0" << std::endl;
 }
