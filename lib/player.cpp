@@ -2,13 +2,13 @@
 #include <algorithm>
 #include <iostream>
 #include <memory>
-#include <stdexcept>
-#include <string>
 #include <array>
+
 #include <vlc/vlc.h>
 #include <dbus/dbus.h>
+#include <glib-2.0/glib-object.h>
 
-#define BUS_NAME "org.mpris.MediaPlayer2.spotify"
+#define SPOTIFY_BUS "org.mpris.MediaPlayer2.spotify"
 
 
 // Initialize the instance and the player
@@ -97,7 +97,16 @@ void VLCWindow::set_position(int ms) {
 // Initialize all dbus variables
 DBusPlayer::DBusPlayer(bool debug, bool fullscreen) : player(debug, fullscreen) {
     // Init the error structure
-   dbus_error_init(&error);
+    dbus_error_init(&error);
+
+    // Connnect to DBus
+    connection = dbus_bus_get(DBUS_BUS_SYSTEM, &error);
+    if (connection == nullptr) {
+        perror(error.name);
+        perror(error.message);
+    }
+
+    // Connect to the MPRIS player
 }
 
 // Wait for changes in the dbus data

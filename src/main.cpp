@@ -1,9 +1,3 @@
-#ifdef __linux__
-    #define USE_DBUS true
-#else
-    #define USE_DBUS false
-#endif
-
 #include <iostream>
 #include <chrono>
 #include "../lib/player.h"
@@ -24,20 +18,25 @@ int main(int argc, char *argv[]) {
     if (argc >= 2) {
         for (int i=1; i<argc; i++) {
             std::string arg = argv[i];
+
             if (arg == "--help" || arg == "-h") {
                 print_usage();
                 return 0;
             }
+
             else if (arg == "--version" || arg == "-v") {
                 print_version();
                 return 0;
             }
+
             else if (arg == "--no-lyrics" || arg == "-n") {
                 SHOW_LYRICS = false;
             }
+
             else if (arg == "--fullscreen" || arg == "-f") {
                 FULLSCREEN = true;
             }
+
             else if (arg == "--debug") {
                 DEBUG = true;
             }
@@ -47,10 +46,13 @@ int main(int argc, char *argv[]) {
     // Hides stderr if debug is disabled
     if (!DEBUG) freopen("/dev/null", "w", stderr);
 
+    // Chooses the used API depending on the platform
+#ifdef __linux__
     DBusPlayer spotify(DEBUG, FULLSCREEN);
-
-    // Check platform
     play_videos_dbus(spotify.player, spotify);
+#else
+    std::cout << "spotify-videos only works on linux for now.\n";
+#endif
 
     return 0;
 }
@@ -66,6 +68,7 @@ void play_videos_dbus(VLCWindow player, DBusPlayer spotify) {
 
         auto t_end = std::chrono::high_resolution_clock::now();
         int offset = std::chrono::duration<double, std::milli>(t_end-t_start).count();
+
 
         // TODO: Play only if spotify is playing
         player.play();
