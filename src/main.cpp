@@ -10,13 +10,12 @@ void play_videos_dbus(VLCWindow player, DBusPlayer spotify);
 // Argument variables
 bool SHOW_LYRICS = true;
 bool FULLSCREEN = false;
-bool DEBUG = false;
 
 
 int main(int argc, char *argv[]) {
     // Argument parsing
     if (argc >= 2) {
-        for (int i=1; i<argc; i++) {
+        for (int i = 1; i < argc; i++) {
             std::string arg = argv[i];
 
             if (arg == "--help" || arg == "-h") {
@@ -36,19 +35,17 @@ int main(int argc, char *argv[]) {
             else if (arg == "--fullscreen" || arg == "-f") {
                 FULLSCREEN = true;
             }
-
-            else if (arg == "--debug") {
-                DEBUG = true;
-            }
         }
     }
     
     // Hides stderr if debug is disabled
-    if (!DEBUG) freopen("/dev/null", "w", stderr);
+#ifdef DEBUG
+    freopen("/dev/null", "w", stderr);
+#endif
 
     // Chooses the used API depending on the platform
 #ifdef __linux__
-    DBusPlayer spotify(DEBUG, FULLSCREEN);
+    DBusPlayer spotify(FULLSCREEN);
     play_videos_dbus(spotify.player, spotify);
 #else
     std::cout << "spotify-videos only works on linux for now.\n";
@@ -88,7 +85,6 @@ void print_usage() {
         << "optional arguments:\n"
         << "  -h, --help            show this help message and exit\n"
         << "  -v, --version         show the program's version and exit\n"
-        << "  --debug               display debug messages\n"
         << "  -n, --no-lyrics       do not print lyrics\n"
         << "  -f, --fullscreen      play videos in fullscreen mode\n"
         << std::flush;

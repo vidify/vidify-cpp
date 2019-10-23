@@ -12,16 +12,19 @@
 
 
 // Initialize the instance and the player
-VLCWindow::VLCWindow(bool args_debug, bool args_fullscreen) {
-    // Arguments config
-    debug = args_debug;
+VLCWindow::VLCWindow(bool args_fullscreen) {
     fullscreen = args_fullscreen;
 
-    log("Initializing VLC", debug);
+#ifdef DEBUG
+    std::cout << "Initializing VLC" << std::endl;
+#endif
     
     std::string args = "";
-    if (debug) args += "--verbose=0";
-    else args += "--quiet";
+#ifdef DEBUG
+    args += "--verbose=0";
+#else
+    args += "--quiet";
+#endif
 
     const char *const vlc_args = args.c_str();
     instance = libvlc_new(2, &vlc_args);
@@ -54,7 +57,9 @@ std::string VLCWindow::get_url(std::string title) {
 
 // Load a new video on the VLC player
 void VLCWindow::load_video(const std::string url) {
-    log("Playing video", debug);
+#ifdef DEBUG
+    std::cout << "Playing video" << std::endl;
+#endif
 
     // Media instance
     libvlc_media_t *media = libvlc_media_new_location(instance, url.c_str());
@@ -90,12 +95,14 @@ void VLCWindow::toggle_pause() {
 
 // Set the position in milliseconds of the VLC media playing
 void VLCWindow::set_position(int ms) {
-    log("Position moved to " + std::to_string(ms));
+#ifdef DEBUG
+    std::cout << "Position moved to " << ms << std::endl;
+#endif
     libvlc_media_player_set_time(player, ms);
 }
 
 // Initialize all dbus variables
-DBusPlayer::DBusPlayer(bool debug, bool fullscreen) : player(debug, fullscreen) {
+DBusPlayer::DBusPlayer(bool fullscreen) : player(fullscreen) {
     // Init the error structure
     dbus_error_init(&error);
 
@@ -113,11 +120,3 @@ DBusPlayer::DBusPlayer(bool debug, bool fullscreen) : player(debug, fullscreen) 
 void DBusPlayer::wait() {
     while(1) {}
 }
-
-// Log a formatted message if debug is enabled
-void log(std::string msg, bool debug) {
-    if (debug) {
-        std::cout << "\033[92m" << ">> " << msg << "\033[0m" << std::endl;
-    }
-}
-

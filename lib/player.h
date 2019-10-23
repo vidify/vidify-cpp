@@ -5,11 +5,11 @@
 #ifndef PLAYER_LIB
 #define PLAYER_LIB
 
-void log(std::string msg, bool debug = true);
+void log(std::string msg);
 
 class VLCWindow {
     public:
-        VLCWindow(bool debug, bool fullscreen);
+        VLCWindow(bool fullscreen);
         ~VLCWindow() = default; // Todo
 
         void play();
@@ -24,14 +24,12 @@ class VLCWindow {
         libvlc_instance_t *instance;
         libvlc_media_player_t *player;
 
-        // Config
-        bool debug;
         bool fullscreen;
 };
 
 class DBusPlayer {
     public:
-        DBusPlayer(bool debug, bool fullscreen);
+        DBusPlayer(bool fullscreen);
         ~DBusPlayer() = default; // TODO
         
         VLCWindow player;
