@@ -74,7 +74,6 @@ void VLCWindow::load_video(const std::string url) {
 // Print the song lyrics
 void VLCWindow::print_lyrics(std::string name) {
     std::cout << "\033[4m" << name << "\033[0m\n";
-    // TODO
 }
 
 // Play/Pause the video
