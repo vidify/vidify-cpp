@@ -1,5 +1,5 @@
 # Try to find DBus
-# Once done, this will define
+# Once done, this will define:
 #
 #  DBUS_FOUND - system has DBus
 #  DBUS_INCLUDE_DIRS - the DBus include directories

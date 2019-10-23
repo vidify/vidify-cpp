@@ -8,7 +8,7 @@ LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 FIND_PACKAGE(LibVLC REQUIRED)
 IF (LIBVLC_FOUND)
-    MESSAGE(STATUS "Found LibVLC library path:${LIBVLC_LIBRARY}")
+    MESSAGE(STATUS "Found LibVLC library path: ${LIBVLC_LIBRARY}")
     MESSAGE(STATUS "Found LibVLC include-dir path: ${LIBVLC_INCLUDE_DIR}")
     INCLUDE_DIRECTORIES(${LIBVLC_INCLUDE_DIR})
 ELSE ()
@@ -38,7 +38,7 @@ ENDIF (GLIB_FOUND)
 
 SET(SOURCE_FILES
                 src/main.cpp
-                lib/player.cpp)
+                src/player/vlc.cpp)
 
 ADD_EXECUTABLE(spotivids ${SOURCE_FILES})
 TARGET_LINK_LIBRARIES(

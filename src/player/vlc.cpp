@@ -1,27 +1,20 @@
-#include "player.h"
-#include <algorithm>
+#include "vlc.h"
 #include <iostream>
+#include <algorithm>
 #include <memory>
 #include <array>
-
 #include <vlc/vlc.h>
-#include <dbus/dbus.h>
-#include <glib-2.0/glib-object.h>
-
-#define SPOTIFY_BUS "org.mpris.MediaPlayer2.spotify"
 
 
 // Initialize the instance and the player
-VLCWindow::VLCWindow(bool args_fullscreen) {
-    fullscreen = args_fullscreen;
-
+VLCPlayer::VLCPlayer() {
 #ifdef DEBUG
     std::cout << "Initializing VLC" << std::endl;
 #endif
     
     std::string args = "";
 #ifdef DEBUG
-    args += "--verbose=0";
+    args += "--verbose=1";
 #else
     args += "--quiet";
 #endif
@@ -30,11 +23,12 @@ VLCWindow::VLCWindow(bool args_fullscreen) {
     instance = libvlc_new(2, &vlc_args);
     if (!instance) throw std::runtime_error("VLC couldn't be initialzed");
 
-	player = libvlc_media_player_new(instance);
+	mediaPlayer = libvlc_media_player_new(instance);
 }
 
+
 // Returns the url ouput from a youtube-dl search
-std::string VLCWindow::get_url(std::string title) {
+std::string VLCPlayer::get_url(std::string title) {
     std::array<char, 128> buffer;
     std::string result;
 
@@ -56,7 +50,7 @@ std::string VLCWindow::get_url(std::string title) {
 
 
 // Load a new video on the VLC player
-void VLCWindow::load_video(const std::string url) {
+void VLCPlayer::load_video(const std::string url) {
 #ifdef DEBUG
     std::cout << "Playing video" << std::endl;
 #endif
@@ -66,25 +60,30 @@ void VLCWindow::load_video(const std::string url) {
     if (!media) throw std::runtime_error("No media found");
 
     // Loading media on the player
-    libvlc_media_player_set_media(player, media);
+    libvlc_media_player_set_media(mediaPlayer, media);
     libvlc_media_release(media);
-    libvlc_set_fullscreen(player, fullscreen);
 }
 
+
 // Print the song lyrics
-void VLCWindow::print_lyrics(std::string name) {
+void VLCPlayer::print_lyrics(std::string name) {
     std::cout << "\033[4m" << name << "\033[0m\n";
 }
 
+
 // Play/Pause the video
-void VLCWindow::play() {
-    libvlc_media_player_play(player);
+void VLCPlayer::play() {
+    libvlc_media_player_play(mediaPlayer);
 }
-void VLCWindow::pause() {
-    libvlc_media_player_pause(player);
+
+
+void VLCPlayer::pause() {
+    libvlc_media_player_pause(mediaPlayer);
 }
-void VLCWindow::toggle_pause() {
-    if (libvlc_media_player_is_playing(player)) {
+
+
+void VLCPlayer::toggle_pause() {
+    if (libvlc_media_player_is_playing(mediaPlayer)) {
         pause();
     }
     else {
@@ -92,30 +91,11 @@ void VLCWindow::toggle_pause() {
     }
 }
 
+
 // Set the position in milliseconds of the VLC media playing
-void VLCWindow::set_position(int ms) {
+void VLCPlayer::set_position(int ms) {
 #ifdef DEBUG
     std::cout << "Position moved to " << ms << std::endl;
 #endif
-    libvlc_media_player_set_time(player, ms);
-}
-
-// Initialize all dbus variables
-DBusPlayer::DBusPlayer(bool fullscreen) : player(fullscreen) {
-    // Init the error structure
-    dbus_error_init(&error);
-
-    // Connnect to DBus
-    connection = dbus_bus_get(DBUS_BUS_SYSTEM, &error);
-    if (connection == nullptr) {
-        perror(error.name);
-        perror(error.message);
-    }
-
-    // Connect to the MPRIS player
-}
-
-// Wait for changes in the dbus data
-void DBusPlayer::wait() {
-    while(1) {}
+    libvlc_media_player_set_time(mediaPlayer, ms);
 }
