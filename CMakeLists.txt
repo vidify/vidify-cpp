@@ -35,7 +35,7 @@ ELSE ()
     MESSAGE(FATAL_ERROR "GLib wasn't found in the system. Please install the libraries try again.")
 ENDIF (GLIB_FOUND)
 
-FIND_PACKAGE(Qt5 COMPONENTS Widgets REQUIRED)
+FIND_PACKAGE(Qt5 COMPONENTS Core Widgets DBus REQUIRED)
 
 SET(SOURCE_FILES
                 src/main.cpp
@@ -50,4 +50,5 @@ TARGET_LINK_LIBRARIES(
     ${GLIB_LIBRARIES}
     ${GLIB_GOBJECT_LIBRARIES}
     Qt5::Widgets
+    Qt5::DBus
 )

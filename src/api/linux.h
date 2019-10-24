@@ -1,14 +1,10 @@
 #include <iostream>
 #include <chrono>
-#include <dbus/dbus.h>
+#include <QtDBus>
 #include <glib-2.0/glib-object.h>
 
 #ifndef H_LINUX
 #define H_LINUX
-
-
-// The DBus bus name for the Spotify player
-static const std::string SPOTIFY_BUS = "org.mpris.MediaPlayer2.spotify";
 
 
 /*
@@ -19,7 +15,7 @@ static const std::string SPOTIFY_BUS = "org.mpris.MediaPlayer2.spotify";
 template <class P>
 class DBusAPI {
 public:
-    DBusAPI(P player);
+    DBusAPI(P videoPlayer);
     ~DBusAPI() = default;  // TODO
     
     P player;
@@ -28,27 +24,27 @@ public:
     bool is_playing;
     void wait();
 private:
-    DBusConnection *connection;
-    DBusError error;
-    // GMainLoop *loop;
 };
 
 
 template <class P>
 DBusAPI<P>::DBusAPI(P videoPlayer) {
-    player = videoPlayer;
-
-    // Init the error structure
-    dbus_error_init(&error);
+    this->player = videoPlayer;
 
     // Connnect to DBus
-    connection = dbus_bus_get(DBUS_BUS_SYSTEM, &error);
-    if (connection == nullptr) {
-        perror(error.name);
-        perror(error.message);
+    if (!QDBusConnection::sessionBus().isConnected()) {
+        std::cerr << "ERROR: Cannot connect to the DBus session bus.\n";
+        exit(1);
     }
 
-    // Connect to the MPRIS player
+    QDBusInterface mprisInterface = QDBusInterface("org.mpris.MediaPlayer2.spotify", "/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2");
+    if (!mprisInterface.isValid()) {
+        std::cerr << "ERROR: Cannot connect to the Spotify interface\n";
+        exit(1);
+    }
+
+    QVariant metadata = mprisInterface.property("Metadata");
+    exit(0);
 }
 
 

@@ -14,11 +14,10 @@ struct option {
 void parseConfig() {
     QSettings settings("spotivids", "spotivids");
     settings.setPath(QSettings::IniFormat, QSettings::UserScope, "spotivids.conf");
-    std::cout << settings.fileName().toStdString() << std::endl;
+    std::cout << "Config file at " << settings.fileName().toStdString() << std::endl;
 
     settings.beginGroup("/Defaults");
     std::cout << settings.value("fullscreen").toBool() << std::endl;
     std::cout << settings.value("test").toInt() << std::endl;
     settings.endGroup();
-    exit(0);
 }
