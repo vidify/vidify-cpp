@@ -1,9 +1,9 @@
-#include "vlc.h"
 #include <iostream>
 #include <algorithm>
 #include <memory>
 #include <array>
 #include <vlc/vlc.h>
+#include "vlc.hpp"
 
 
 // Initialize the instance and the player
