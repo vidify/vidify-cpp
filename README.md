@@ -1,6 +1,10 @@
 # Spotify Music videos
 
-A simple tool to show Youtube **music videos** and **lyrics** for the currently playing Spotify songs with VLC. This version has been rewritten in C++ for learning purposes and to hopefully have less lag.
+This repository is just an attempt to translate Vidify, which is currently written in Python, to C++. Its purpose was to make the app more lightweight, fast, and easy to distribute. It's really limited, as it's based on an early version, and I just made it to learn C++; it's nowhere near being finished, and I won't work on it anymore. It's just here for the sake of history :P.
+
+---
+
+A simple tool to show Youtube **music videos** and **lyrics** for the currently playing Spotify songs with VLC.
 
 ![example](screenshots/screenshot.png)
 
